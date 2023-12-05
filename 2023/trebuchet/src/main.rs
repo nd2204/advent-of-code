@@ -7,6 +7,8 @@ fn main() {
     let content: Vec<String> = read_line(file_path);
 
     let result = process(&content);
+    assert_eq!(word_to_num("eightwo91"), "8wo91");
+    assert_eq!(word_to_num("oneight91"), "1ight91");
     println!("the result is: {result}");
 }
 
@@ -52,22 +54,37 @@ fn word_to_num(input: &str) -> String {
         "five", "six", "seven", "eight", "nine"
     ];
 
-    let mut counter = HashMap::new();
-    while !counter.is_empty() {
+    loop {
+        let mut counter: HashMap<&str, usize> = HashMap::new();
         for unit in units.iter() {
             counter.insert(unit, match s.find(unit) {
                 Some(n) => n,
                 None => continue
             });
         }
-        println!("{:?}", counter);
 
-        for &unit in counter.keys().enumerate() {
+        if counter.is_empty() {
+            break;
+        }
+
+        println!("map: {:?}", counter);
+        let mut sorted_counter: Vec<&str, usize> = counter.keys().collect();
+        sorted_counter.sort_by(|a, b| a.1.cmp(b.1));
+        println!("sorted: {:?}", sorted_counter);
+
+        for &unit in sorted_counter {
+            let idx = match units.iter().position(|&x| x == unit) {
+                Some(n) => n,
+                None => {
+                    println!("Error no units match");
+                    break
+                }
+            };
             s = s.replacen(unit, &idx.to_string(), 1);
         }
     }
 
-    s
+    return s;
 }
 
 fn read_line(filename: &str) -> Vec<String> {
