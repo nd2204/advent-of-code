@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fs;
 
 #[allow(unused)]
@@ -28,7 +29,6 @@ fn process_line(input: &str) -> u32 {
     for (idx, c) in s.chars().enumerate() {
         if c.is_digit(10) {
             result.push(c);
-            s.remove(idx);
             break;
         }
     }
@@ -52,9 +52,21 @@ fn word_to_num(input: &str) -> String {
         "five", "six", "seven", "eight", "nine"
     ];
 
-    for (idx, &unit) in units.iter().enumerate() {
-        s = s.replace(unit, &idx.to_string());
+    let mut counter = HashMap::new();
+    while !counter.is_empty() {
+        for unit in units.iter() {
+            counter.insert(unit, match s.find(unit) {
+                Some(n) => n,
+                None => continue
+            });
+        }
+        println!("{:?}", counter);
+
+        for &unit in counter.keys().enumerate() {
+            s = s.replacen(unit, &idx.to_string(), 1);
+        }
     }
+
     s
 }
 
