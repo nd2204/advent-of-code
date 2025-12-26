@@ -1,3 +1,6 @@
 **/target/
-
+.env
 !.gitignore
+cookie.*
+
+__pycache__
